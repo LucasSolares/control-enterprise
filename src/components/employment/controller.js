@@ -1,5 +1,7 @@
 const Store = require('./store')
 
+const StoreEnterprise = require('../enterprise/store')
+
 async function addEmployment(employment_name = '', position = '', department='', enterprise) {
 
     try {
@@ -11,7 +13,9 @@ async function addEmployment(employment_name = '', position = '', department='',
             throw {message: 'Missing Data something like employment_name, position, department or enterprise', code: 400}
 
         }
-        return await Store.addEmployment({employment_name, position, department, enterprise})
+        const newEmployment = await Store.addEmployment({employment_name, position, department, enterprise})
+        StoreEnterprise.updateEnterprise(enterprise, {$inc: {employment_cuantity: 1}})
+        return newEmployment
 
 
     } catch (error) {
@@ -103,7 +107,9 @@ async function deleteEmployment(_id) {
             throw {message: 'Missing Data you dont send the Id of employment', code: 400}
     
         }
-        return await Store.deleteEmployment(_id)
+        const employmentDeleted =  await Store.deleteEmployment(_id)
+        StoreEnterprise.updateEnterprise(employmentDeleted.enterprise, {$inc: {employment_cuantity: -1}})
+        return employmentDeleted
         
     } catch (error) {
         console.error(error)

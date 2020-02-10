@@ -6,7 +6,7 @@ const schema = new Schema({
     position: String,
     department: String,
     enterprise: {
-        type:Schema.Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         required: true, 
         ref: 'enterprise'
     }
