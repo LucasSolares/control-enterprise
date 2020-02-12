@@ -11,9 +11,12 @@ exports.addEmployment = async (employment) => {
     }
 }
 
-exports.listEmployments = async (filter) => {
+exports.listEmployments = async (filter, needToSort, query) => {
 
     try {
+        if(needToSort && query) {
+            return await Model.find(filter).sort(query).populate('enterprise').exec()
+        }
         return await Model.find(filter).populate('enterprise').exec()
     } catch (error) {
         console.error(error)

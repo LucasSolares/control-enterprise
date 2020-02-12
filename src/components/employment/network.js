@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
         response.error(res, error.code)
     }
 })
+
 router.post('/', async (req, res) => {
     const {employment_name, position, department, enterprise} = req.body
     try {
@@ -25,18 +26,30 @@ router.post('/', async (req, res) => {
         response.error(res, error.code)
     }
 })
+
+router.post('/report', async (req, res) => {
+    try {
+        const URL = await Controller.generateReport()
+        response.success(res, URL, 201)
+    } catch (error) {
+        console.error(error)
+        response.error(res, error.code)
+    }
+})
+
 router.put('/', async (req, res) => {
 
     const {_id, employment_name, position, department, enterprise} = req.body
 
     try {
-        const employmentUpdated = await Controller.updateEmployment(_id, employment_name, position, department, enterprise)
+        const employmentUpdated = await Controller.updateEmployment(_id, employment_name, department, position, enterprise)
         response.success(res, employmentUpdated)
     } catch (error) {
         response.error(res, error.code)
     }
 
 })
+
 router.delete('/', async (req, res) => {
     const {_id} = req.body
 

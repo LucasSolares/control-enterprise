@@ -1,3 +1,4 @@
+const Template = require('../../templates/enterprises')
 const Store = require('./store')
 
 async function addEnterprise(enterprise_name = '', description = '') {
@@ -90,12 +91,26 @@ async function deleteEnterprise(_id) {
 
 }
 
+async function generateReport() {
+
+    try {
+        const enterprises = await Store.listEnterprises({})
+        const URL = Template.generateReport(enterprises)
+        return URL
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+
+}
+
 module.exports =
 {
 
     addEnterprise,
     listEnterprises,
     updateEnterprise,
-    deleteEnterprise
+    deleteEnterprise,
+    generateReport
 
 }

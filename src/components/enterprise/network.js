@@ -25,6 +25,17 @@ router.post('/', async (req, res) => {
         response.error(res, error.code)
     }
 })
+
+router.post('/report', async (req, res) => {
+    try {
+        const URL = await Controller.generateReport()
+        response.success(res, URL, 201)
+    } catch (error) {
+        console.error(error)
+        response.error(res, error.code)
+    }
+})
+
 router.put('/', async (req, res) => {
 
     const {_id, enterprise_name, description} = req.body

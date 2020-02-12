@@ -1,3 +1,4 @@
+const Template = require('../../templates/employments')
 const Store = require('./store')
 
 const StoreEnterprise = require('../enterprise/store')
@@ -119,12 +120,27 @@ async function deleteEmployment(_id) {
 
 }
 
+async function generateReport() {
+
+    try {
+        const orderByEnterpriseEmployments = await Store.listEmployments({}, true, { enterprise: 1 } )
+        const URL = await Template.generateReport(orderByEnterpriseEmployments)
+        return URL
+    } catch (error) {
+        console.error(error)
+        console.trace()
+        throw error
+    }
+
+}
+
 module.exports =
 {
 
     addEmployment,
     listEmployments,
     updateEmployment,
-    deleteEmployment
+    deleteEmployment,
+    generateReport
 
 }
