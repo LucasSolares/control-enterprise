@@ -1,6 +1,8 @@
 const Template = require('../../templates/enterprises')
 const Store = require('./store')
 
+const StoreEmployments = require('../employment/store')
+
 async function addEnterprise(enterprise_name = '', description = '') {
 
     try {
@@ -81,7 +83,13 @@ async function deleteEnterprise(_id) {
             throw {message: 'Missing Data you dont send de Id of enterprise', code: 400}
     
         }
-        return await Store.deleteEnterprise(_id)
+
+        const enterpriseDeleted = await Store.deleteEnterprise(_id)
+        if(!enterpriseDeleted) {
+            throw {message: `The enterprise with id ${enterpriseDeleted._id} not founded`}
+        }
+        await StoreEmployments.deleteEmployment(undefined, {enterprise: enterpriseDeleted._id})
+        return enterpriseDeleted
         
     } catch (error) {
         console.error(error)

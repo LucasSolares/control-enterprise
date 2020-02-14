@@ -46,16 +46,21 @@ exports.updateEmployment = async (_id, employmentToUpdate) => {
 
 }
 
-exports.deleteEmployment = async (_id) => {
+exports.deleteEmployment = async (_id, filter) => {
 
     try {
-        const employmentDeleted = await Model.findByIdAndDelete(_id)
-        if(!employmentDeleted) {
+        let employmentsDeleted
+        if(!filter) {
+            employmentsDeleted = await Model.findByIdAndDelete(_id)
+        } else {
+            employmentsDeleted = await Model.deleteMany(filter)
+        }
+        if(!employmentsDeleted) {
 
             throw {message: `Employment with ${_id} not founded`, code: 404}
 
         }
-        return employmentDeleted
+        return employmentsDeleted
     } catch (error) {
         console.error(error)
         console.trace()
