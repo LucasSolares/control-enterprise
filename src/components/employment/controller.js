@@ -3,7 +3,9 @@ const Store = require('./store')
 
 const StoreEnterprise = require('../enterprise/store')
 
-async function addEmployment(employment_name = '', position = '', department='', enterprise) {
+async function addEmployment(employment_name = '', position = '', department='', enterprise, branchOffice) {
+
+    let employmentToAdd;
 
     try {
         employment_name = employment_name.trim()
@@ -14,7 +16,11 @@ async function addEmployment(employment_name = '', position = '', department='',
             throw {message: 'Missing Data something like employment_name, position, department or enterprise', code: 400}
 
         }
-        const newEmployment = await Store.addEmployment({employment_name, position, department, enterprise})
+        employmentToAdd = {employment_name, position, department, enterprise}
+        if(branchOffice) {
+            employmentToAdd.branchOffice = branchOffice
+        }
+        const newEmployment = await Store.addEmployment(employmentToAdd)
         StoreEnterprise.updateEnterprise(enterprise, {$inc: {employment_cuantity: 1}})
         return newEmployment
 
@@ -27,7 +33,7 @@ async function addEmployment(employment_name = '', position = '', department='',
 
 }
 
-async function listEmployments(_id, department = '', employment_name = '', position = '', enterprise) {
+async function listEmployments(_id, department = '', employment_name = '', position = '', enterprise, branchOffice) {
     //ENTERPRISE IS REQUIRED EVERYTIME
     let filter = {enterprise}
 
@@ -58,6 +64,8 @@ async function listEmployments(_id, department = '', employment_name = '', posit
 
             filter.position = position   
 
+        } else if(branchOffice) {
+            filter.branchOffice = branchOffice
         }
 
         return await Store.listEmployments(filter)
@@ -69,7 +77,7 @@ async function listEmployments(_id, department = '', employment_name = '', posit
 
 }
 
-async function updateEmployment(_id, employment_name = '', department = '', position = '', enterprise) {
+async function updateEmployment(_id, employment_name = '', department = '', position = '', enterprise, branchOffice) {
 
     let employmentUpdated = {}
 
@@ -89,6 +97,9 @@ async function updateEmployment(_id, employment_name = '', department = '', posi
             }
             if(enterprise) {
                 employmentUpdated.enterprise = enterprise
+            }
+            if(branchOffice) {
+                employmentUpdated.branchOffice = branchOffice
             }
             if(Object.keys(employmentUpdated).length > 0) {
 

@@ -9,6 +9,10 @@ const schema = new Schema({
         type: Schema.Types.ObjectId, 
         required: true, 
         ref: 'enterprise'
+    },
+    branch_office: {
+        type: Schema.Types.ObjectId,
+        ref: 'branchOffice'
     }
 })
 
