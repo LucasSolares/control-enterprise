@@ -10,7 +10,7 @@ exports.addBranchOffice = async (branchOffice) => {
     }
 }
 
-exports.listBranchOffices = async (filter, options = {}) => {
+exports.listBranchOffices = async (filter) => {
 
     try {
         return await Model.find(filter)
