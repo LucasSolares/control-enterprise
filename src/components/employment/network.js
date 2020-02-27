@@ -6,9 +6,9 @@ const Controller = require('./controller')
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-    const {_id, employment_name, position, department} = req.body
+    const {_id, department, employment_name, position, enterprise} = req.body
     try {
-        const employments = await Controller.listEmployments(_id, department, employment_name, position)
+        const employments = await Controller.listEmployments(_id, department, employment_name, position, enterprise)
         response.success(res, employments)
     } catch (error) {
         console.error(error)

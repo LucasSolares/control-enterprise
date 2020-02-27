@@ -27,16 +27,20 @@ async function addEmployment(employment_name = '', position = '', department='',
 
 }
 
-async function listEmployments(_id, department = '', employment_name = '', position = '') {
-
-    let filter = {}
+async function listEmployments(_id, department = '', employment_name = '', position = '', enterprise) {
+    //ENTERPRISE IS REQUIRED EVERYTIME
+    let filter = {enterprise}
 
     try {
         console.log(position)
         department = department.trim()
         employment_name = employment_name.trim()
         position = position.trim()
-        if(_id) {
+        if(!enterprise) {
+
+            throw {message: 'Missing Data enterprise is required', code: 400}
+
+        } else if(_id) {
 
             filter._id = _id
 
@@ -47,11 +51,15 @@ async function listEmployments(_id, department = '', employment_name = '', posit
 
         }
         else if(employment_name) {
+
             filter.employment_name = {$regex: `.*${employment_name}.*`}
         }
         else if(position) {
-            filter.position = position
+
+            filter.position = position   
+
         }
+
         return await Store.listEmployments(filter)
     } catch (error) {
         console.error(error)
