@@ -1,19 +1,28 @@
 const Template = require('../../templates/enterprises')
 const Store = require('./store')
 
+const Auth = require('../../auth')
 const StoreEmployments = require('../employment/store')
 
-async function addEnterprise(enterprise_name = '', description = '') {
+async function addEnterprise(enterprise_name = '', description = '', email = '', password = '') {
 
     try {
         enterprise_name = enterprise_name.trim()
         description = description.trim()
-        if(!(enterprise_name && description)) {
+        email = email.trim()
+        password = password.trim()
 
-            throw {message: 'Missing Data something like enterprise_name or description', code: 400}
+        const enterpriseAlreadyWithThatEmail = await Store.listEnterprises({email})
+        if(enterpriseAlreadyWithThatEmail.pop()) {
+            throw {message: 'Sorry there was an enterprise with that email', code: 400}
+        }
+        if(!(enterprise_name && description && email && password)) {
+
+            throw {message: 'Missing Data something like enterprise_name, description, email or password', code: 400}
 
         }
-        return await Store.addEnterprise({enterprise_name, description})
+        const passwordHashed = await Auth.hashPassword(password)
+        return await Store.addEnterprise({enterprise_name, description, email, password: passwordHashed})
 
 
     } catch (error) {
@@ -43,19 +52,27 @@ async function listEnterprises(_id) {
 
 }
 
-async function updateEnterprise(_id, enterprise_name = '', description = '') {
+async function updateEnterprise(_id, enterprise_name = '', description = '', email = '', password = '',) {
 
     let enterpriseUpdated = {}
 
     try {
         enterprise_name = enterprise_name.trim()
         description = description.trim()
+        email = email.trim()
+        password = password.trim()
         if(_id) {
             if(enterprise_name) {
                 enterpriseUpdated.enterprise_name = enterprise_name
             }
             if(description) {
                 enterpriseUpdated.description = description
+            }
+            if(email) {
+                enterpriseUpdated.email = email
+            }
+            if(password) {
+                enterpriseUpdated.password = await Auth.hashPassword(password)
             }
             if(Object.keys(enterpriseUpdated).length > 0) {
 
@@ -64,7 +81,7 @@ async function updateEnterprise(_id, enterprise_name = '', description = '') {
             }
         }
         
-        throw {message: 'Missing Data, something like enterprise_name, description or _id', code: 400}
+        throw {message: 'Missing Data, something like enterprise_name, description, email, password or _id', code: 400}
         
     } catch (error) {
         console.error(error)
@@ -112,6 +129,32 @@ async function generateReport() {
 
 }
 
+async function signIn(email = '', password = '') {
+
+    try {
+        email = email.trim()
+        password = password.trim()
+
+        if(!(email && password)) {
+            throw {message: 'Missing data something like email or password', code: 400}
+        }
+
+        const enterprise = (await Store.listEnterprises({email})).pop()
+        if(!enterprise) {
+            throw {message: `There was no enterprise with email: ${email}`, code: 400}
+        }
+        const passwordCorrect = await Auth.comparePassword(password, enterprise.password)
+        if(!passwordCorrect) {
+            throw {message: 'Password incorrect', code: 400}
+        }
+        return Auth.generateAndSignToken({sub: enterprise.id})
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+
+}
+
 module.exports =
 {
 
@@ -119,6 +162,7 @@ module.exports =
     listEnterprises,
     updateEnterprise,
     deleteEnterprise,
-    generateReport
+    generateReport,
+    signIn
 
 }

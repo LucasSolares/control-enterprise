@@ -6,6 +6,8 @@ const DB_NAME = process.env.DB_NAME || 'enterprise-control-2018336'
 const MONGODB_URL = process.env.MONGODB_URL || `mongodb://${MONGODB_HOST}:${MONGODB_PORT}/${DB_NAME}`
 const PUBLIC_DIRECTORY = process.env.PUBLIC_DIRECTORY || 'public'
 const REPORT_DIRECTORY = process.env.REPORT_DIRECTORY || 'reports'
+const SALT = process.env.SALT || 5
+const SECRET = process.env.SECRET || 'secret'
 
 module.exports = 
 {
@@ -16,6 +18,8 @@ module.exports =
     DB_NAME,
     MONGODB_URL,
     PUBLIC_DIRECTORY,
-    REPORT_DIRECTORY
+    REPORT_DIRECTORY,
+    SALT,
+    SECRET
 
 }

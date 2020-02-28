@@ -38,3 +38,52 @@ async function listBranchOffices(_id, country = '', enterprise) {
     
 
 }
+
+async function updateBranchOffice(_id, country = '', address = '', postal_code= 0, enterprise) {
+
+    let branchOfficeToUpdate = {}
+
+    try {
+        if(_id) {
+            if(country) {
+                branchOfficeToUpdate.country = country
+            }
+            if(address) {
+                branchOfficeToUpdate.address = address
+            }
+            if(postal_code) {
+                branchOfficeToUpdate.postal_code = postal_code
+            }
+            if(enterprise) {
+                branchOfficeToUpdate.enterprise = enterprise
+            }
+            if(Object.keys(branchOfficeToUpdate).length !== 0) {
+                return await Store.updateBranchOffice(_id, branchOfficeToUpdate)
+            }
+        }
+        throw {message: 'Missing data something like _id, country, address, postal_code or enterprise', code: 400}
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+
+}
+
+async function deleteBranchOffice(_id) {
+
+    try {
+        return await Store.deleteBranchOffice(_id)
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+
+}
+
+module.exports = 
+{
+    addBranchOffice,
+    listBranchOffices,
+    updateBranchOffice,
+    deleteBranchOffice
+}

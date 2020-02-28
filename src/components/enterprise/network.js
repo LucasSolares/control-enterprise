@@ -2,6 +2,7 @@ const express = require('express')
 
 const response = require('../../network/response')
 const Controller = require('./controller')
+const Secure = require('./secure')
 
 const router = express.Router()
 
@@ -16,9 +17,9 @@ router.get('/', async (req, res) => {
     }
 })
 router.post('/', async (req, res) => {
-    const {enterprise_name, description} = req.body
+    const {enterprise_name, description, email, password} = req.body
     try {
-        const newEnterprise = await Controller.addEnterprise(enterprise_name, description)
+        const newEnterprise = await Controller.addEnterprise(enterprise_name, description, email, password)
         response.success(res, newEnterprise, 201)
     } catch (error) {
         console.error(error)
@@ -36,25 +37,38 @@ router.post('/report', async (req, res) => {
     }
 })
 
-router.put('/', async (req, res) => {
+router.put('/', Secure.checkAuth('checkOwn'), async (req, res) => {
 
-    const {_id, enterprise_name, description} = req.body
+    const {_id, enterprise_name, description, email, password} = req.body
 
     try {
-        const enterpriseUpdated = await Controller.updateEnterprise(_id, enterprise_name, description)
+        const enterpriseUpdated = await Controller.updateEnterprise(_id, enterprise_name, description, email, password)
         response.success(res, enterpriseUpdated)
     } catch (error) {
+        console.error(error)
         response.error(res, error.code)
     }
 
 })
-router.delete('/', async (req, res) => {
+router.delete('/', Secure.checkAuth('checkOwn'), async (req, res) => {
     const {_id} = req.body
 
     try {
         const enterpriseDeleted = await Controller.deleteEnterprise(_id)
         response.success(res, enterpriseDeleted)
     } catch (error) {
+        console.error(error)
+        response.error(res, error.code)
+    }
+})
+
+router.post('/signin', async (req, res) => {
+    const {email, password} = req.body
+    try {
+        const token = await Controller.signIn(email, password)
+        response.success(res, token)
+    } catch (error) {
+        console.error(error)
         response.error(res, error.code)
     }
 })

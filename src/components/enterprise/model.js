@@ -3,6 +3,8 @@ const Schema = mongoose.Schema
 
 const schema = new Schema({
     enterprise_name: String,
+    email: String,
+    password: String,
     description: String,
     employment_cuantity: {
         type: Number,

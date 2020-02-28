@@ -4,6 +4,7 @@ const statusResponses = {
     '201': 'CREATED!',
     '400': 'CLIENT ERROR!',
     '404': 'NOT FOUND!',
+    '401': 'UNAUTHORIZED',
     '500': 'INTERNAL SERVER ERROR'
 
 }
