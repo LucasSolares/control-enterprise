@@ -8,7 +8,7 @@ async function addBranchOffice(country = '', address = '', postal_code= 0, enter
         country = country.trim()
         address = address.trim()
         if(!(country && address && postal_code && enterprise)) {
-            throw {messsage: 'Missing data something like country, address, postal_code or enterprise', code: 400}
+            throw {messsage: 'Missing data something like country, address or postal_code', code: 400}
         }
         branchOfficeToAdd = {country, address, postal_code, enterprise}
         return await Store.addBranchOffice(branchOfficeToAdd)
@@ -20,7 +20,7 @@ async function addBranchOffice(country = '', address = '', postal_code= 0, enter
 }
 
 async function listBranchOffices(_id, country = '', enterprise) {
-    let filter = {}
+    let filter = {enterprise}
 
     try {
         if(!enterprise){
@@ -28,7 +28,7 @@ async function listBranchOffices(_id, country = '', enterprise) {
         } else if(_id) {
             filter._id = _id
         } else if(country) {
-            filter.country = country
+            filter.country = { $regex: `.*${country}.*`, $options: '$i'}
         }
         return await Store.listBranchOffices(filter)
     } catch (error) {
@@ -54,14 +54,11 @@ async function updateBranchOffice(_id, country = '', address = '', postal_code= 
             if(postal_code) {
                 branchOfficeToUpdate.postal_code = postal_code
             }
-            if(enterprise) {
-                branchOfficeToUpdate.enterprise = enterprise
-            }
             if(Object.keys(branchOfficeToUpdate).length !== 0) {
-                return await Store.updateBranchOffice(_id, branchOfficeToUpdate)
+                return await Store.updateBranchOffice({_id, enterprise}, branchOfficeToUpdate)
             }
         }
-        throw {message: 'Missing data something like _id, country, address, postal_code or enterprise', code: 400}
+        throw {message: 'Missing data something like _id, country, address or postal_code', code: 400}
     } catch (error) {
         console.error(error)
         throw error
@@ -69,10 +66,10 @@ async function updateBranchOffice(_id, country = '', address = '', postal_code= 
 
 }
 
-async function deleteBranchOffice(_id) {
+async function deleteBranchOffice(_id, enterprise) {
 
     try {
-        return await Store.deleteBranchOffice(_id)
+        return await Store.deleteBranchOffice({_id, enterprise})
     } catch (error) {
         console.error(error)
         throw error

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const schema = new Schema({
     country: String,
     address: String,
-    postal_code: Number,
+    postal_code: String,
     enterprise: {
         type: Schema.Types.ObjectId,
         required: true,

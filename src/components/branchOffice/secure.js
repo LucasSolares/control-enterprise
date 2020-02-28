@@ -1,6 +1,7 @@
 const response = require('../../network/response')
 
 const Auth = require('../../auth')
+const Store = require('./store')
 
 exports.checkAuth = (action) => {
     function authMiddleWare(req, res, next) {
@@ -9,8 +10,13 @@ exports.checkAuth = (action) => {
             const payload = Auth.decodeToken(token)
 
             switch (action) {
-                case 'updateOrDelete':
-                    req.body._id = payload.sub
+                case 'updateDeleteOrList':
+                    req.body.enterprise = payload.sub
+                    next()
+                    break
+
+                case 'create':
+                    req.body.enterprise = payload.sub
                     next()
                     break
 

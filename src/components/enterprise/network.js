@@ -37,7 +37,7 @@ router.post('/report', async (req, res) => {
     }
 })
 
-router.put('/', Secure.checkAuth('checkOwn'), async (req, res) => {
+router.put('/', Secure.checkAuth('updateOrDelete'), async (req, res) => {
 
     const {_id, enterprise_name, description, email, password} = req.body
 
@@ -50,7 +50,7 @@ router.put('/', Secure.checkAuth('checkOwn'), async (req, res) => {
     }
 
 })
-router.delete('/', Secure.checkAuth('checkOwn'), async (req, res) => {
+router.delete('/', Secure.checkAuth('updateOrDelete'), async (req, res) => {
     const {_id} = req.body
 
     try {

@@ -21,10 +21,10 @@ exports.listBranchOffices = async (filter) => {
 
 }
 
-exports.updateBranchOffice = async (_id, branchOfficeToUpdate, options = {}) => {
+exports.updateBranchOffice = async (filter, branchOfficeToUpdate, options = {}) => {
 
     try {
-        const branchOfficeUpdated = await Model.findByIdAndUpdate(_id, branchOfficeToUpdate, {...options, new: true})
+        const branchOfficeUpdated = await Model.updateOne(filter, branchOfficeToUpdate, {...options, new: true})
         if(!branchOfficeUpdated) {
             throw {message: `Branch office with id ${_id} not founded`, code: 404}
         }
@@ -36,10 +36,10 @@ exports.updateBranchOffice = async (_id, branchOfficeToUpdate, options = {}) => 
 
 }
 
-exports.deleteBranchOffice = async (_id, options = {}) => {
+exports.deleteBranchOffice = async (filter, options = {}) => {
 
     try {
-        const branchOfficeDeleted = await Model.findByIdAndDelete(_id, {...options})
+        const branchOfficeDeleted = await Model.deleteOne(filter, {...options})
         if(!branchOfficeDeleted) {
             throw {message: `Branch office with id ${_id} not founded`, code: 404}
         }
